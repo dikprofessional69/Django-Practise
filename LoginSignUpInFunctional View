@@ -1,0 +1,35 @@
+def signup(request):
+    if request.method == 'GET':
+        form = UserRegistrationForm()
+
+
+    elif request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            redirect('index')
+
+
+    return render(request, 'products_app/signup.html', {'form': form})
+
+----------------------------------------------
+def login(request):
+    if request.method == 'GET':
+        form = UserLoginForm()
+
+
+    elif request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('name')
+            password = form.cleaned_data.get('password')
+            user = User.objects.filter(name=username, password=password).first()
+            if user is not None:
+                request.session['user'] = username
+                return redirect('index')
+
+            else:
+                messages.error(request, 'Username or password no matched')
+
+
+    return render(request, 'products_app/login.html', {'form': form})	
